@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const rimraf = require('rimraf');
+const ncp = require('ncp');
+const replace = require('replace-in-file');
+
+replace.sync({
+  files: "./dist/**/*.html",
+  from: "<script>window.__PRERENDER__=true;</script>",
+  to: ""
+});
+
+fs.copyFileSync('./dist/index.html', './_layouts/default.html');
+fs.copyFileSync('./dist/404/index.html', './404.html');
+rimraf.sync('./assets');
+rimraf.sync('./posts');
+
+ncp('./dist/posts', './posts', function (err) {
+  if (err) {
+    return console.error(err);
+  }
+});
+
+ncp('./dist/assets', './assets', function (err) {
+  if (err) {
+    return console.error(err);
+  }
+});
